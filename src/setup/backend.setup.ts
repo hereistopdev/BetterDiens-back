@@ -1,5 +1,3 @@
-/** @format */
-
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import router from "@/routers";
@@ -10,25 +8,21 @@ import {
   errorHandlerMiddleware,
   routeMiddleware,
 } from "@/middlewares";
+import serverless from "serverless-http"; // Required for Vercel
 
-export const backendSetup = () => {
-  const app: Express = express();
+const app: Express = express();
 
-  app.use(cors());
-  app.use(express.json());
-  app.use(clientUse());
-  app.use(routeMiddleware);
-  app.use("/health", (_req: Request, res: Response) => {
-    res.send("It's healthy!");
-  }); //health check
+app.use(cors());
+app.use(express.json());
+app.use(clientUse());
+app.use(routeMiddleware);
+app.use("/health", (_req: Request, res: Response) => {
+  res.send("It's healthy!");
+}); // Health check route
 
-  app.use("/api", router);
+app.use("/api", router);
+app.use(errorHandlerMiddleware);
 
-  app.use(errorHandlerMiddleware);
+Logger.info("✅ Express server is set up!");
 
-  const port = process.env.PORT || 8000;
-
-  app.listen(port, () => {
-    Logger.info(`Sever is running on ${port}`);
-  });
-};
+export default serverless(app); // Export as serverless function

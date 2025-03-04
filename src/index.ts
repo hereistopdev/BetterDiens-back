@@ -1,25 +1,15 @@
-/** @format */
+import app from "./setup/backend.setup"; // Import the Express app
+import { databaseSetup } from "./setup"; // Import the database setup function
 
-import { databaseSetup } from "./setup";
-import { backendSetup } from "./setup/backend.setup";
-import { Logger, MESSAGES } from "./utils";
-
-const setupServer = async () => {
+const startServer = async () => {
   try {
-    await databaseSetup();
-    Logger.info(MESSAGES.CONNECTED_DATABASE);
-  } catch (err) {
-    Logger.error(err);
-    Logger.info(MESSAGES.FAILED_TO_CONNECT_DATABASE);
-  }
-
-  try {
-    await backendSetup();
-    Logger.info(MESSAGES.SERVER_RUNNING);
-  } catch (err) {
-    Logger.error(err);
-    Logger.info(MESSAGES.SERVER_RUNNING_FAILED);
+    await databaseSetup(); // Initialize Database Before Starting the API
+    console.log("✅ Database connected successfully!");
+  } catch (error) {
+    console.error("❌ Failed to connect to the database:", error);
   }
 };
 
-setupServer();
+startServer(); // Run database setup
+
+export default app; // Export Express app for Vercel
